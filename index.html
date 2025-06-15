@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OkCupid Message Sender</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .message-box {
+            width: 50%;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .message-box input, .message-box button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .message-box button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .message-box button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>OkCupid Message Sender</h1>
+    <div class="message-box">
+        <label for="message">Göndermek İstediğiniz Mesajı Girin:</label>
+        <input type="text" id="message" placeholder="Mesajınızı buraya yazın">
+        <button onclick="sendMessage()">Mesajı Gönder</button>
+        <p id="response"></p>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const message = document.getElementById('message').value;
+            const responseElement = document.getElementById('response');
+
+            if (!message) {
+                responseElement.textContent = "Lütfen bir mesaj girin!";
+                return;
+            }
+
+            try {
+                const response = await fetch('https://api.okcupid.com/sendMessage', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer <YOUR_ACCESS_TOKEN>'
+                    },
+                    body: JSON.stringify({
+                        text: message,
+                        targetId: "<USER_ID>"  // Buraya mesaj göndereceğiniz kullanıcı ID'sini ekleyin
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    responseElement.textContent = "Mesaj başarıyla gönderildi!";
+                } else {
+                    responseElement.textContent = "Mesaj gönderilemedi.";
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                responseElement.textContent = "Bir hata oluştu!";
+            }
+        }
+    </script>
+</body>
+</html>
